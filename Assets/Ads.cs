@@ -9,14 +9,14 @@ public class Ads : MonoBehaviour
     BannerView BannerView;
     private  InterstitialAd interstitial;
     private string _adUnitId = "ca-app-pub-3940256099942544/1033173712";
+    string adUnitId = "ca-app-pub-3940256099942544/6300978111";
+
 
 
 
     void Start()
     {
         MobileAds.Initialize(initStatus => { });
-
-      g
        RequestInterstitial();
     }
 
@@ -34,16 +34,21 @@ public class Ads : MonoBehaviour
             RequestInterstitial();
         }
     }
-    public void Banner()
+    public void ShowBanner()
     {
         RequestBanner();
     }
-  
-    
-  private void RequestBanner()
+
+    public void HideBanner()
+    {
+        BannerView.Destroy();
+        BannerView = null;
+    }
+
+
+    private void RequestBanner()
     {
 #if UNITY_ANDROID
-        string adUnitId = "ca-app-pub-3940256099942544/6300978111";
 #endif
         this.BannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Bottom);
 
