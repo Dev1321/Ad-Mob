@@ -16,9 +16,11 @@ public class Ads : MonoBehaviour
     {
         MobileAds.Initialize(initStatus => { });
 
-      
+      g
        RequestInterstitial();
     }
+
+   
 
  public void RunInterstitialAd()
     {
@@ -32,10 +34,13 @@ public class Ads : MonoBehaviour
             RequestInterstitial();
         }
     }
-
+    public void Banner()
+    {
+        RequestBanner();
+    }
   
     
-  public void RequestBanner()
+  private void RequestBanner()
     {
 #if UNITY_ANDROID
         string adUnitId = "ca-app-pub-3940256099942544/6300978111";
