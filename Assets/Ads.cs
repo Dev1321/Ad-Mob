@@ -12,6 +12,7 @@ public class Ads : MonoBehaviour
     private string _adUnitId = "ca-app-pub-3940256099942544/1033173712";
     string adunitId = "ca-app-pub-3940256099942544/6300978111";
     string adUnitId = "ca-app-pub-3940256099942544/5224354917";
+    private int counter;
 
     void Start()
     {
@@ -38,7 +39,7 @@ public class Ads : MonoBehaviour
         {
             this.rewardedAd.Show();
             RequestRewardedVideoAd();
-
+           
         }
     }
     public void ShowBanner()
@@ -131,11 +132,35 @@ public class Ads : MonoBehaviour
     {
         this.rewardedAd = new RewardedAd(adUnitId);
         this.rewardedAd.OnUserEarnedReward += EarnReward;
+        rewardedAd.OnAdClicked += OnAdClickedreward;
+        rewardedAd.OnAdFullScreenContentOpened += FullScreenReward;
+        rewardedAd.OnAdFullScreenContentClosed += ClosedFullScreenReward;
         AdRequest request = new AdRequest.Builder().Build();
         this.rewardedAd.LoadAd(request);
+        rewardedAd.OnAdPaid += (AdValue adValue) =>
+        {
+            Debug.Log(String.Format("Rewarded ad paid {0} {1}.",
+                adValue.Value,
+                adValue.CurrencyCode));
+        };
     }
+
     public void EarnReward(object sender, Reward args)
     {
         //give user reward
-        Debug.Log("User Earn Reward");
+        Debug.Log("User Earn 5 points");
     }
+    public void OnAdClickedreward()
+    {
+        Debug.Log("reward ad was clicked.");
+    }
+    public void FullScreenReward()
+    {
+        Debug.Log("Reward Ad opened in full screen");
+    }
+    private void ClosedFullScreenReward()
+    {
+        Debug.Log("Reward Ad full screen closed");
+    }
+
+}
