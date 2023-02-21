@@ -6,23 +6,19 @@ using System;
 
 public class Ads : MonoBehaviour
 {
-    BannerView BannerView;
-    private  InterstitialAd interstitial;
+    BannerView bannerView;
+    private InterstitialAd interstitial;
     private string _adUnitId = "ca-app-pub-3940256099942544/1033173712";
     string adUnitId = "ca-app-pub-3940256099942544/6300978111";
-
-
-
+    private object adValue;
 
     void Start()
     {
         MobileAds.Initialize(initStatus => { });
-       RequestInterstitial();
+        RequestInterstitial();
     }
 
-   
-
- public void RunInterstitialAd()
+    public void RunInterstitialAd()
     {
         if (this.interstitial.IsLoaded())
         {
@@ -41,31 +37,75 @@ public class Ads : MonoBehaviour
 
     public void HideBanner()
     {
-        BannerView.Destroy();
-        BannerView = null;
+        bannerView.Destroy();
+        bannerView = null;
     }
-
 
     private void RequestBanner()
     {
-#if UNITY_ANDROID
-#endif
-        this.BannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Bottom);
+        this.bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Bottom);
 
         var adRequest = new AdRequest.Builder()
             .AddKeyword("unity-admob-sample")
             .Build();
 
         Debug.Log("Loading banner ad.");
-        BannerView.LoadAd(adRequest);
+        bannerView.LoadAd(adRequest);
+
+        bannerView.OnBannerAdLoaded += OnBannerAdLoaded;
+        bannerView.OnAdClicked += OnAdClicked;
+        bannerView.OnAdFullScreenContentOpened += OnAdFullScreenContent;
+        bannerView.OnAdFullScreenContentClosed += OnAdFullScreenContentClosed;
+        bannerView.OnAdPaid += (AdValue adValue) =>
+        {
+            Debug.Log(String.Format("Banner view paid {0} {1}.",
+                adValue.Value,
+                adValue.CurrencyCode));
+        };
+        bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
+         {
+             Debug.LogError("Banner view failed to load an ad with error :" + error);
+         };
+    }
+    private void OnAdFullScreenContent()
+    {
+        Debug.Log("Banner view full screen content opened.");
+    }
+
+    private void OnAdFullScreenContentClosed()
+    {
+        Debug.Log("Banner view full screen content closed.");
+    }
+    private void OnAdClicked()
+    {
+        Debug.Log("Banner view was clicked.");
+    }
+
+    private void OnBannerAdLoaded()
+    {
+        Debug.Log("Banner view loaded an ad with response : "
+          + bannerView.GetResponseInfo());
     }
     private void RequestInterstitial()
     {
         this.interstitial = new InterstitialAd(_adUnitId);
         AdRequest request = new AdRequest.Builder().Build();
         this.interstitial.LoadAd(request);
+
+        interstitial.OnAdClicked += OnAdClickint;
+        interstitial.OnAdFullScreenContentOpened += OnAdFullScreenContentint;
+        interstitial.OnAdFullScreenContentClosed += OnAdFullScreenContentClosedint;
+    }
+    private void OnAdClickint()
+    {
+        Debug.Log("Interstitial ad was clicked.");
+    }
+    private void OnAdFullScreenContentint()
+    {
+        Debug.Log("Interstitial ad full screen content opened.");
+    }
+    private void OnAdFullScreenContentClosedint()
+    {
+        Debug.Log("Interstitial ad full screen content closed.");
     }
 }
-
-
-
