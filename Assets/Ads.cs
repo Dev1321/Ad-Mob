@@ -6,16 +6,18 @@ using System;
 
 public class Ads : MonoBehaviour
 {
-    BannerView bannerView;
+    private BannerView bannerView;
     private InterstitialAd interstitial;
+    private RewardedAd rewardedAd;
     private string _adUnitId = "ca-app-pub-3940256099942544/1033173712";
-    string adUnitId = "ca-app-pub-3940256099942544/6300978111";
-    private object adValue;
+    string adunitId = "ca-app-pub-3940256099942544/6300978111";
+    string adUnitId = "ca-app-pub-3940256099942544/5224354917";
 
     void Start()
     {
         MobileAds.Initialize(initStatus => { });
         RequestInterstitial();
+        RequestRewardedVideoAd();
     }
 
     public void RunInterstitialAd()
@@ -28,6 +30,15 @@ public class Ads : MonoBehaviour
         else
         {
             RequestInterstitial();
+        }
+    }
+    public void LoadRewardedInterstitial()
+    {
+        if (this.rewardedAd.IsLoaded())
+        {
+            this.rewardedAd.Show();
+            RequestRewardedVideoAd();
+
         }
     }
     public void ShowBanner()
@@ -95,6 +106,7 @@ public class Ads : MonoBehaviour
         interstitial.OnAdClicked += OnAdClickint;
         interstitial.OnAdFullScreenContentOpened += OnAdFullScreenContentint;
         interstitial.OnAdFullScreenContentClosed += OnAdFullScreenContentClosedint;
+        interstitial.OnAdPaid += OnAdPaid;
     }
     private void OnAdClickint()
     {
@@ -108,4 +120,22 @@ public class Ads : MonoBehaviour
     {
         Debug.Log("Interstitial ad full screen content closed.");
     }
-}
+    private void OnAdPaid(AdValue adValue)
+    {
+        Debug.Log(String.Format("Interstitial ad paid {0} {1}.",
+                adValue.Value,
+                adValue.CurrencyCode));
+    }
+
+    private void RequestRewardedVideoAd()
+    {
+        this.rewardedAd = new RewardedAd(adUnitId);
+        this.rewardedAd.OnUserEarnedReward += EarnReward;
+        AdRequest request = new AdRequest.Builder().Build();
+        this.rewardedAd.LoadAd(request);
+    }
+    public void EarnReward(object sender, Reward args)
+    {
+        //give user reward
+        Debug.Log("User Earn Reward");
+    }
